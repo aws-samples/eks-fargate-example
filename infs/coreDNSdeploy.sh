@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
 # Deploys CoreDNS to a cluster currently running Kube-DNS.
 
 show_help () {

@@ -1,4 +1,7 @@
 # ##############################################################################
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 while getopts v:r: flag
 do
     case "${flag}" in

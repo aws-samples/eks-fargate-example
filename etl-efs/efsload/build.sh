@@ -11,7 +11,8 @@ if [ -z "$version" ] ; then
   echo "usage: build.sh -v {version}  [-r {container repo url}]"
   exit 2
 fi
-
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
 echo "Version: $version, Repo: $repo"
 
 #Build a tag

@@ -1,3 +1,6 @@
+<!--Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.-->
+<!--SPDX-License-Identifier: MIT-0-->
+
 # ETL on EKS and Fargate Test Harness
 
 The data are from NOAA Geostationary Operational Environmental Satellites (GOES) 16 & 17 hosted on the [Registry of Open Data on AWS](https://registry.opendata.aws/noaa-goes/)

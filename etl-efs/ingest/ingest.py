@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 from flask import Flask, flash, request, redirect, url_for
 from kafka import KafkaProducer
 import time

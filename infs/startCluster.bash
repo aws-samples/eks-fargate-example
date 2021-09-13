@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
 iteration=1
 region="us-east-2"
 while getopts i:r:fe flag
@@ -154,9 +156,9 @@ done
 
 ### Deploy kafka to EKS
 ## K8S based Kafka
-# kubectl apply -f kafka.yaml
+kubectl apply -f kafka.yaml
 ## Managed Kafka Service
-aws cloudformation create-stack  --stack-name eksfg-3-mks-2 --parameters ParameterKey=SubnetIds,ParameterValue=subnet-0fe8a544788f3c068\\,subnet-0e0a159a6f135cc4d\\,subnet-08e87d921bb94d431 --template-body file://mks-cf.yaml
+# aws cloudformation create-stack  --stack-name eksfg-3-mks-2 --parameters ParameterKey=SubnetIds,ParameterValue=subnet-0fe8a544788f3c068\\,subnet-0e0a159a6f135cc4d\\,subnet-08e87d921bb94d431 --template-body file://mks-cf.yaml
 
 # Deploy the ETL pipeline to EKS
 sed -i.orig "s/FILESYSTEM_ID/$file_system_id/g" ../etl-efs/ETL.yaml

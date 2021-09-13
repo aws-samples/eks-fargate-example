@@ -1,3 +1,6 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 FROM python:3.9.6-slim-bullseye
 RUN mkdir /app
 WORKDIR /app
