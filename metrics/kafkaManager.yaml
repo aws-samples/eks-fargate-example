@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-manager
+  namespace: ab3-etl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-manager
+  template:
+    metadata:
+      labels:
+        app: kafka-manager
+    spec:
+      containers:
+      - name: kafka-manager
+        image: kafkamanager/kafka-manager
+        ports:
+        - containerPort: 80
+        env:
+        - name: ZK_HOSTS
+          value: zk-cs.ab3-etl:2181
+        command:
+        - /opt/cmak-3.0.0.4/bin/cmak
+        - -Dhttp.port=80
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka-manager
+  namespace: ab3-etl
+spec:
+  selector:
+    app: kafka-manager
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
