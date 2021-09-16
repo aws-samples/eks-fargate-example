@@ -28,21 +28,13 @@ aws iam detach-role-policy --role-name $nodeRole \
 
 # Clean up the services
 kubectl delete svc --namespace=eksfg-etl etl-ingest
-kubectl delete svc dashboard-metrics-scraper
-kubectl delete svc kubernetes-dashboard
-kubectl delete svc metrics-server
-kubectl delete svc --namespace=eksfg-etl kafka-hs
-kubectl delete svc --namespace=eksfg-etl zk-cs
-kubectl delete svc --namespace=eksfg-etl zk-hs
-
-sleep 30
-
-# delete the cluster
-
-sg="sg"$(aws ec2 describe-security-groups --output=text |grep eksfg-c-EFS-SG | awk -F'sg' '{print $2}' | awk '{print $1}')
-aws ec2 delete-security-group --group-id $sg
-sleep 30
-
+kubectl delete svc --namespace=eksfg-etl-bus kafka-hs
+kubectl delete svc --namespace=eksfg-etl-bus zk-cs
+kubectl delete svc --namespace=eksfg-etl-bus zk-hs
+kubectl delete svc --namespace=kubernetes-dashboard dashboard-metrics-scraper
+kubectl delete svc --namespace=kube-system metrics-server
+kubectl delete svc --namespace=kubernetes-dashboard kubernetes-dashboard
+kubectl delete svc --namespace=eksfg-etl etl-testharness
 
 # Clean up the EFS
 file_system_id=$(aws efs describe-file-systems \
@@ -56,7 +48,9 @@ for target in $mounttargets ; do
 done  
 sleep 30
 aws efs delete-file-system --file-system-id $file_system_id
-
+sleep 10
+sg="sg"$(aws ec2 describe-security-groups --output=text |grep EFS | grep $cluster_name | awk -F'sg' '{print $2}' | awk '{print $1}')
+aws ec2 delete-security-group --group-id $sg
 
 eksctl delete cluster -n $cluster_name -r $region
 

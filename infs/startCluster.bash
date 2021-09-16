@@ -134,11 +134,13 @@ for subnet in $subnets ; do
     --subnet-id $subnet \
     --security-groups $security_group_id
 done
+kubectl apply -f ../etl-efs/EFSPV.yaml
+sleep 60
 
-### Deploy kafka to EKS
+### Deploy kafka
 ## K8S based Kafka
 kubectl apply -f kafka.yaml
-## Managed Kafka Service
+## Managed Kafka Service - todo
 # aws cloudformation create-stack  --stack-name eksfg-3-mks-2 --parameters ParameterKey=SubnetIds,ParameterValue=subnet-0fe8a544788f3c068\\,subnet-0e0a159a6f135cc4d\\,subnet-08e87d921bb94d431 --template-body file://mks-cf.yaml
 
 # Deploy the ETL pipeline to EKS
@@ -146,6 +148,11 @@ sed -i.orig "s/FILESYSTEM_ID/$file_system_id/g" ../etl-efs/ETL.yaml
 cp ../etl-efs/ETL.yaml ../etl-efs/ETL.prod.yaml
 cp ../etl-efs/ETL.yaml.orig ../etl-efs/ETL.yaml
 kubectl apply -f ../etl-efs/ETL.prod.yaml
+
+## Deploy the test harness
+wait 120
+kubectl apply -f testharness.yaml
+
 
 
 
