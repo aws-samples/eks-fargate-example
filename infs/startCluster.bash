@@ -93,24 +93,24 @@ sleep 10
 
 echo "configure EFS and K8S"
 
-#load balancer controller
-curl -o elb_iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/iam_policy.json
-aws iam create-policy \
-    --policy-name AWSLoadBalancerControllerIAMPolicy$cluster_name \
-    --policy-document file://elb_iam_policy.json
-eksctl create iamserviceaccount \
-  --cluster=$cluster_name \
-  --namespace=kube-system \
-  --name=aws-load-balancer-controller \
-  --attach-policy-arn=arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy \
-  --override-existing-serviceaccounts \
-  --approve
-kubectl apply \
-    --validate=false \
-    -f https://github.com/jetstack/cert-manager/releases/download/v1.1.1/cert-manager.yaml
-curl -o v2_2_0_full.yaml https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/v2_2_0_full.yaml
-sleep 10
-kubectl apply -f v2_2_0_full.yaml
+# #load balancer controller
+# curl -o elb_iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/iam_policy.json
+# aws iam create-policy \
+#     --policy-name AWSLoadBalancerControllerIAMPolicy$cluster_name \
+#     --policy-document file://elb_iam_policy.json
+# eksctl create iamserviceaccount \
+#   --cluster=$cluster_name \
+#   --namespace=kube-system \
+#   --name=aws-load-balancer-controller \
+#   --attach-policy-arn=arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy \
+#   --override-existing-serviceaccounts \
+#   --approve
+# kubectl apply \
+#     --validate=false \
+#     -f https://github.com/jetstack/cert-manager/releases/download/v1.1.1/cert-manager.yaml
+# curl -o v2_2_0_full.yaml https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/v2_2_0_full.yaml
+# sleep 10
+# kubectl apply -f v2_2_0_full.yaml
 
 #efs csi  
 kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.3.4"
