@@ -138,6 +138,26 @@ sed -i.orig "s/FILESYSTEM_ID/$file_system_id/g" ../etl-efs/EFSPV.yaml
 cp ../etl-efs/EFSPV.yaml ../etl-efs/EFSPV.prod.yaml
 mv ../etl-efs/EFSPV.yaml.orig ../etl-efs/EFSPV.yaml
 kubectl apply -f ../etl-efs/EFSPV.prod.yaml
+
+#load balancer controller
+curl -o elb_iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/iam_policy.json
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy$cluster_name \
+    --policy-document file://elb_iam_policy.json
+eksctl create iamserviceaccount \
+  --cluster=$cluster_name \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --attach-policy-arn=arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --approve
+kubectl apply \
+    --validate=false \
+    -f https://github.com/jetstack/cert-manager/releases/download/v1.1.1/cert-manager.yaml
+curl -o v2_2_0_full.yaml https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/v2_2_0_full.yaml
+sleep 10
+kubectl apply -f v2_2_0_full.yaml
+
 sleep 60
 
 ### Deploy kafka
@@ -147,11 +167,11 @@ kubectl apply -f kafka.yaml
 # aws cloudformation create-stack  --stack-name eksfg-3-mks-2 --parameters ParameterKey=SubnetIds,ParameterValue=subnet-0fe8a544788f3c068\\,subnet-0e0a159a6f135cc4d\\,subnet-08e87d921bb94d431 --template-body file://mks-cf.yaml
 
 # Deploy the ETL pipeline to EKS
-kubectl apply -f ../etl-efs/ETL.prod.yaml
+kubectl apply -f ../etl-efs/ETL.yaml
 
 ## Deploy the test harness
 wait 120
-kubectl apply -f testharness.yaml
+kubectl apply -f .../testharness/testharness.yaml
 
 
 
