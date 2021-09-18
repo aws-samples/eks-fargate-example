@@ -170,8 +170,8 @@ kubectl apply -f kafka.yaml
 kubectl apply -f ../etl-efs/ETL.yaml
 
 ## Deploy the test harness
-wait 120
-kubectl apply -f .../testharness/testharness.yaml
+sleep 120
+kubectl apply -f ../testharness/testharness.yaml
 
 
 
