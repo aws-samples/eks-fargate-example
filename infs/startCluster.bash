@@ -148,29 +148,30 @@ eksctl create iamserviceaccount \
   --cluster=$cluster_name \
   --namespace=kube-system \
   --name=aws-load-balancer-controller \
-  --attach-policy-arn=arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy \
+  --attach-policy-arn=arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy$cluster_name \
   --override-existing-serviceaccounts \
   --approve
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
+
+sleep 60
 
 sed -i.orig "s/your-cluster-namne/$cluster_name/g" v2_2_0_full.yaml
 cp v2_2_0_full.yaml v2_2_0_full.prod.yaml
 mv v2_2_0_full.yaml.orig v2_2_0_full.yaml
 kubectl apply -f v2_2_0_full.prod.yaml
 
-sleep 60
-
 ### Deploy kafka
 ## K8S based Kafka
 kubectl apply -f kafka.yaml
 ## Managed Kafka Service - todo
 # aws cloudformation create-stack  --stack-name eksfg-3-mks-2 --parameters ParameterKey=SubnetIds,ParameterValue=subnet-0fe8a544788f3c068\\,subnet-0e0a159a6f135cc4d\\,subnet-08e87d921bb94d431 --template-body file://mks-cf.yaml
+sleep 60 
 
 # Deploy the ETL pipeline to EKS
 kubectl apply -f ../etl-efs/ETL.yaml
 
 ## Deploy the test harness
-sleep 120
+sleep 60
 kubectl apply -f ../testharness/testharness.yaml
 
 

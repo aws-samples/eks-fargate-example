@@ -13,6 +13,7 @@ do
 done
 cluster_name="eksfg-$iteration"
 keyPair="$cluster_name"
+awsaccount=$(aws sts get-caller-identity | grep Account | awk -F\" '{print $4}')
 echo "$iteration $cluster_name $region $keyPair"
 
 #delete the keys
@@ -35,6 +36,8 @@ kubectl delete svc --namespace=kubernetes-dashboard dashboard-metrics-scraper
 kubectl delete svc --namespace=kube-system metrics-server
 kubectl delete svc --namespace=kubernetes-dashboard kubernetes-dashboard
 kubectl delete svc --namespace=eksfg-etl etl-testharness
+
+aws iam delete-policy --policy-arn arn:aws:iam::$awsaccount:policy/AWSLoadBalancerControllerIAMPolicy$cluster_name
 
 # Clean up the EFS
 file_system_id=$(aws efs describe-file-systems \
