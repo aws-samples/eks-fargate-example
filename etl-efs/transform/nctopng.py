@@ -1,5 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
+import os
+os.environ['MPLCONFIGDIR'] = "/data"
 import matplotlib.pyplot as plt
 import netCDF4
 import requests

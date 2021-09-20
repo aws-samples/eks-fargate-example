@@ -105,6 +105,13 @@ spec:
     spec:
       containers:
         - name: etl-transform
+          resources:
+            requests:
+              memory: "16Gi"
+              cpu: "2"
+            limits:
+              memory: "16Gi"
+              cpu: "4"             
           image: TRANSFORM_IMAGE_TAG
           imagePullPolicy: Always
           env:
