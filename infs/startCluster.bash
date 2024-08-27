@@ -72,10 +72,50 @@ aws iam attach-role-policy --role-name $nodeRole --policy-arn arn:aws:iam::aws:p
 #deploy metrics server
 echo "Deploy K8S dashboard"
 kubectl apply -f ../metrics/metrics-server.yaml
-kubectl apply -f ../metrics/dashboard.yaml
-kubectl apply -f ../metrics/eks-admin-service-account.yaml #TODO: reduce privledges
+#kubectl apply -f ../metrics/dashboard.yaml
+
+kubectl apply -f ../metrics/eks-admin-service-account.yaml 
+#TODO: reduce privledges
 
 sleep 10 
+
+# deploy kubernetes dashboard
+
+# Install Kubernetes Dashboard
+DASHBOARD_VERSION=$(curl -s https://api.github.com/repos/kubernetes/dashboard/releases/latest | grep tag_name | cut -d'"' -f4)
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/$DASHBOARD_VERSION/aio/deploy/recommended.yaml
+
+# Create a Kubernetes service account
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+# Bind the service account to the cluster admin role
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+# Get the token for the service account
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+echo "Kubernetes Dashboard installed successfully!"
+#echo "Access the dashboard at: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/"
+
 
 # Get the dashboard eks-admin auth token
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep eks-admin | awk '{print $1}')
